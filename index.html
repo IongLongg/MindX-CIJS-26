@@ -14,8 +14,9 @@
 </head>
 <body>
     <div id="app"> </div> 
-    <script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-firestore.js"></script>
 
     <script>
         // Your web app's Firebase configuration
@@ -30,6 +31,17 @@
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        var db = firebase.firestore();
+        db.collection('conversations').onSnapshot(function (snapShot) {
+            const conversations = snapShot.docChanges()
+            const cvst = conversations[0];
+            // .map(item => ({
+            //     id: item.doc.id,
+            //     ...item.doc.data();
+            // }))
+            console.log(cvst.doc.data());
+            
+        })
         
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>

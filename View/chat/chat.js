@@ -1,6 +1,9 @@
 import messages from "../../Models/message.js"
 import {authUser} from "../../Models/user.js"
 import newChatController from "../../Controllers/chatController.js"
+import {subscribe} from '../../Models/message.js';
+
+let lastMessage;
 
 const chatScreen = `
 <div class="h-100">
@@ -25,33 +28,29 @@ const chatScreen = `
 
 function addMessage(message) {
     const msgDiv = document.createElement('div');
-    msgDiv.setAttribute('class', 'mt-4 mb-4');
+    const msgSpan = document.createElement('span');
+    msgSpan.innerHTML = message.content;
+    if (lastMessage && lastMessage.uid !== message.uid) {
+        msgDiv.setAttribute('class', 'mt-4');
+    } else {
+        msgDiv.setAttribute('class', 'mt-1');
+
+    }
     if (message.uid === authUser.id) {
         msgDiv.classList.add('text-right');
+        msgSpan.setAttribute('class' ,'badge badge-primary');
+    } else {
+        msgSpan.setAttribute('class', 'badge badge-secondary');
     }
-    for (let i = 0; i< message.messages.length; i++) {
-        msgDiv.appendChild(
-            addSingleMessage(message.messages[i], message.uid === authUser.id)
-        );
-    }
+    msgDiv.appendChild(msgSpan);
     document.getElementById('js-chatArea').appendChild(msgDiv);
+    lastMessage = message;    
 }
 
-function addSingleMessage(content, isOwn) {
-    const msgDiv = document.createElement('div')
-    msgDiv.setAttribute('class', 'mt-1 mb-1');
-    const msgSpan = document.createElement('span');
-    if (isOwn) {
-        msgSpan.setAttribute('class', 'badge badge-primary');
-    } else {
-        msgSpan.setAttribute('class', 'badge badge-dark');      
-    }
-    msgSpan.innerHTML = content;
-    msgDiv.appendChild(msgSpan);
-    return msgDiv;
-}
 
 function onload() {
+    subscribe(chat);
+
     for (let i = 0; i< messages.length; i++) {
         addMessage(messages[i])
     }
@@ -65,9 +64,14 @@ function onload() {
     })
 }
 
+function onNotifyMessage(message) {
+    addMessage(message);
+}
+
 const chat = {
     content: chatScreen,
-    onload: onload
+    onload: onload,
+    onNotifyMessage: onNotifyMessage
 };
 
 export default chat;

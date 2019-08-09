@@ -1,29 +1,27 @@
-const messages = [
-    {
-        uid: "namlong9012@gmail.com",
-        content: "Di hoc mindX k?"
+import guid from '../ultis/uuid.js';
 
-    },
-    {
-        uid: "mindx@gmail.com",
-        content: "Ok b"
+const messages = [];
 
-    },
-    {
-        uid: "namlong9012@gmail.com",
-        content: "Di hoc mindX k?"
+var db = firebase.firestore();
+        db.collection('conversations').onSnapshot(function (snapShot) {
+            const conversations = snapShot.docChanges()
+            const conversation = conversations[0];
+            const messages = conversation.doc.data().messages
+            console.log(messages)
+            
+            if (messages) {
+                 receiveMessage(messages[messages.length - 1])
+            }
+        })
 
-    },
-    {
-        uid: "mindx@gmail.com",
-        content: "Ok b"
-
-    }
-];
-
-function addMessage(message) {
+function receiveMessage(message) {
     messages.push(message);
     notifyMessage(message);
+    // saveMessage(message);
+};
+
+function sendMessage(message) {
+    messages.push(message);
     saveMessage(message);
 };
 
@@ -45,6 +43,8 @@ function notifyMessage(message) {
 };
 
 function saveMessage(message) {
+    message.id = guid();
+
     db.collection("conversations").doc("GZipxA9eWg2PnoRQD0lm").update({
         messages: firebase.firestore.FieldValue.arrayUnion(message)
     })
@@ -56,7 +56,7 @@ function saveMessage(message) {
     });
 };
 
-export { addMessage };
+export { sendMessage };
 export { subscribe };
 export { unsubscribe };
 export default messages;

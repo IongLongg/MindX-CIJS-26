@@ -61,6 +61,7 @@ function onload() {
         const message = formChat.chatMsg.value;
         const controller = newChatController();
         controller.sendMessage(message);
+        formChat.reset() 
     })
 }
 

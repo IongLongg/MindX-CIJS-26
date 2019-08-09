@@ -31,17 +31,7 @@
         };
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        var db = firebase.firestore();
-        db.collection('conversations').onSnapshot(function (snapShot) {
-            const conversations = snapShot.docChanges()
-            const cvst = conversations[0];
-            // .map(item => ({
-            //     id: item.doc.id,
-            //     ...item.doc.data();
-            // }))
-            console.log(cvst.doc.data());
-            
-        })
+        
         
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>

@@ -1,3 +1,4 @@
+import {authUser} from '../Models/user.js';
 import newValidator from "../ultis/validator.js"
 import {isEmptyObject} from "../ultis/object.js"
 import {
@@ -64,13 +65,17 @@ function newAuthController() {
 
             return newSuccessResponse(
                 responseCode.auth.register.success,
-                firebase.auth().currentUser);
+                firebase.auth().currentUser
+            );
     };
 
     controller.login = async function(loginPayload) {
-        const loginResult = await firebase.auth().signInWithEmailAndPassword(loginPayload.email, loginPayload.password);
-        console.log(loginResult);
-        
+        const loginResult = await firebase
+        .auth()
+        .signInWithEmailAndPassword(loginPayload.email, loginPayload.password);
+        authUser.id = loginResult.user.email
+        authUser.name = loginResult.user.displayName
+        return newSuccessResponse(responseCode.auth.login.success, authUser)
     };
 
 

@@ -18,6 +18,10 @@ export const responseCode = {
         register: {
             invalid_input: "auth/register/invalid_input",
             success: "auth/register/success"
+        },
+        login: {
+            invalid_input: "auth/login/invalid_input",
+            success: "auth/login/success"
         }
     }
 };

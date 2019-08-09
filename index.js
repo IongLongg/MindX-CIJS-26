@@ -4,5 +4,5 @@ import register from "./View/auth/register.js"
 import chat from "./View/chat/chat.js"
 
 window.onload = function() {
-    view.setScreen(chat);
+    view.setScreen(login);
 }

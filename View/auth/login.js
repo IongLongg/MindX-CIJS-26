@@ -1,6 +1,7 @@
 import register from "./register.js"
 import view from "../view.js"
 import newAuthController from "../../Controllers/authController.js"
+import chat from "../chat/chat.js";
 
 const loginScreen = `
 <div class="container">
@@ -41,14 +42,17 @@ function onload() {
     btnMoveToRegister.addEventListener('click', function() {
         view.setScreen(register);
     })   
-    formLogin.addEventListener('submit', function(event) {
+    formLogin.addEventListener('submit',async function(event) {
         event.preventDefault();
         const loginPayload = {
             email: formLogin.email.value,
             password: formLogin.password.value
             }        
         const authController = newAuthController();
-        authController.login(loginPayload);
+        const res = await authController.login(loginPayload)
+        if (res.type === 'success') {
+            view.setScreen(chat)
+        }
     });
 }
 

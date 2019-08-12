@@ -10,14 +10,14 @@ const chatScreen = `
     <div class="d-flex flex-column h-100">
         <div class="header bg-primary text-white"><h1>Name</h1></div>
         <div class="flex-grow-1" id="js-chatArea"></div>
-        <div class="p-3">
+        <div class="p-3 bg-secondary">
             <form id="js-formChat">                             
                 <div class="d-flex flex-row w-100">
                     <div class="flex-grow-1">
                         <input type="text" class="form-control" id="chatMsg" placeholder="Type your message ..." >
                     </div>
                     <div>
-                        <button type="submit" class="btn btn-outline-primary" >Send</button>
+                        <button type="submit" class="btn btn-primary" >Send</button>
                     </div>
                 </div>
             </form>

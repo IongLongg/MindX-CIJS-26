@@ -75,6 +75,7 @@ function onload() {
             switch (response.code) {
                 case responseCode.auth.register.success:
                     showSuccessMessager();
+                    view.setScreen(login)
             }
         }
     });

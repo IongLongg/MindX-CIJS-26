@@ -3,8 +3,4 @@ export const authUser = {
     displayName: "Long"
 };
 
-export const listUser = 
-    {
-        id: "mindx@gmail.com",
-        displayName: "Quan"
-    };
+

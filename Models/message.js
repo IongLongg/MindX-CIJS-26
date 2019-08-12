@@ -2,17 +2,16 @@ import guid from '../ultis/uuid.js';
 
 const messages = [];
 
-var db = firebase.firestore();
-        db.collection('conversations').onSnapshot(function (snapShot) {
-            const conversations = snapShot.docChanges()
-            const conversation = conversations[0];
-            const messages = conversation.doc.data().messages
-            console.log(messages)
-            
-            if (messages) {
-                 receiveMessage(messages[messages.length - 1])
-            }
-        })
+db.collection('conversations').onSnapshot(function (snapShot) {
+    const conversations = snapShot.docChanges()
+    const conversation = conversations[0];
+    const messages = conversation.doc.data().messages
+    // console.log(messages)
+    
+    if (messages) {
+            receiveMessage(messages[messages.length - 1])
+    }
+})
 
 function receiveMessage(message) {
     messages.push(message);

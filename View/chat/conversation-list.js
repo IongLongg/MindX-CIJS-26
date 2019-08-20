@@ -1,23 +1,15 @@
 import newChatController from '../../Controllers/chatController.js';
+import {subscribe} from '../../Models/conversation.js';
+import {currentConversation} from '../../Models/message.js';
 
 const listScreen = `
 <div class="row p-3">
     <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#modal-create-conversation" >+</button>
 </div>
-<div class="d-flex">
-    <div class="pr-3">
-    <img
-        style="width: 100px"
-        class="rounded-circle "
-        src="https://motsandco.com/wp-content/uploads/avatar-2-300x300.png"
-        alt=""
-    />
-    </div>
-    <div class="flex-grow-1">
-        <h2>Group chat</h2>
-        <span>Hello</span>
-    </div>
-</div>
+
+<div id="js-listConversation"></div>
+
+
 <hr>
 
 <div id="modal-create-conversation" class="modal fade" tabindex="-1" role="dialog">
@@ -47,17 +39,53 @@ const listScreen = `
 `;
 
 function onload() {
+    subscribe(conversationList)
+
     const btnCreate = document.getElementById('js-btnCreateConversation')
     const formCreate = document.getElementById('js-formCreateConversation')
-    const modalCreate = document.getElementById('modal-create-conversation')
     btnCreate.addEventListener('click', function() {
         const chatController = newChatController()
         chatController.createConversation(formCreate.name.value)
-        console.log(formCreate.name.value)
     })
 }
 
-export default {
+function onNotifyConversation(conversation) {
+  const listConversation = document.getElementById('js-listConversation')
+  const bgClass = conversation.id === currentConversation.id ? 'bg-secondary' : ''
+  
+  const newConversation = 
+  `
+    <div class="d-flex ${bgClass}" id="${conversation.id}">
+        <div class="pr-3">
+        <img
+            style="width: 100px"
+            class="rounded-circle "
+            src="https://motsandco.com/wp-content/uploads/avatar-2-300x300.png"
+            alt=""
+        />
+        </div>
+        <div class="flex-grow-1">
+            <h2>${conversation.name}</h2>
+        </div>
+    </div>
+  `
+  listConversation.insertAdjacentHTML("beforeend", newConversation)
+
+  document.getElementById(conversation.id).addEventListener("click", function () {
+    const chatController = newChatController()
+    if (currentConversation)
+      document.getElementById(currentConversation).classList.remove('bg-secondary')
+    chatController.changeConversation(conversation.id)
+    this.classList.add('bg-secondary')
+  })
+  
+}
+
+
+const conversationList = {
   content: listScreen,
-  onload: onload
+  onload: onload,
+  onNotifyConversation: onNotifyConversation
 };
+
+export default conversationList

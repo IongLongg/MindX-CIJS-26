@@ -1,4 +1,4 @@
-import messages from "../../Models/message.js"
+// import messages from "../../Models/message.js"
 import {authUser} from "../../Models/user.js"
 import newChatController from "../../Controllers/chatController.js"
 import {subscribe} from '../../Models/message.js';
@@ -30,13 +30,16 @@ function addMessage(message) {
     const msgDiv = document.createElement('div');
     const msgSpan = document.createElement('span');
     msgSpan.innerHTML = message.content;
-    if (lastMessage && lastMessage.uid !== message.uid) {
+    
+    console.log(authUser.id, message.id);
+    
+    if (lastMessage && lastMessage.userId !== message.userId) {
         msgDiv.setAttribute('class', 'mt-4');
     } else {
         msgDiv.setAttribute('class', 'mt-1');
 
     }
-    if (message.uid === authUser.id) {
+    if (message.userId === authUser.id) {
         msgDiv.classList.add('text-right');
         msgSpan.setAttribute('class' ,'badge badge-primary');
     } else {
@@ -51,10 +54,7 @@ function addMessage(message) {
 function onload() {
     subscribe(chat);
 
-    for (let i = 0; i< messages.length; i++) {
-        addMessage(messages[i])
-    }
-
+    
     const formChat = document.getElementById('js-formChat');
     formChat.addEventListener('submit', function() {
         event.preventDefault();
@@ -65,14 +65,18 @@ function onload() {
     })
 }
 
-function onNotifyMessage(message) {
-    addMessage(message);
+function onNotifyMessages(messages) {
+    document.getElementById('js-chatArea').innerHTML = ""
+    console.log(messages)
+    for (let i = 0; i< messages.length; i++) {
+        addMessage(messages[i]); 
+    }
 }
 
 const chat = {
     content: chatScreen,
     onload: onload,
-    onNotifyMessage: onNotifyMessage
+    onNotifyMessages: onNotifyMessages
 };
 
 export default chat;

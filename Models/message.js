@@ -1,61 +1,58 @@
-import guid from '../ultis/uuid.js';
+import {authUser} from './user.js';
 
-const messages = [];
+let listMessage = []
+let currentConversation = ''
 
-db.collection('conversations').onSnapshot(function (snapShot) {
-    const conversations = snapShot.docChanges()
-    const conversation = conversations[0];
-    const messages = conversation.doc.data().messages
-    // console.log(messages)
+const listSubscribers = []
+
+function fetchMessage(conversationId) {
+    listMessage = []
+    let messageRef = db.collection('messages')
+    let query = messageRef.where('conversationId', '==', conversationId)
+
+    query.get().then( function(querySnapshot) {
+        querySnapshot.forEach(function (doc) {
+            listMessage.push(doc.data())
+        });
+        notifyMessages(listMessage)
+    })
     
-    if (messages) {
-            receiveMessage(messages[messages.length - 1])
-    }
-})
+}
 
-function receiveMessage(message) {
-    messages.push(message);
-    notifyMessage(message);
-    // saveMessage(message);
-};
+function changeConversation(conversationId) {
+    currentConversation = conversationId
+    fetchMessage(conversationId)
+}
 
-function sendMessage(message) {
-    messages.push(message);
-    saveMessage(message);
-};
+function saveMessage(content) {
+    db.collection("messages").doc().set({
+        conversationId: currentConversation,
+        userId: authUser.id,
+        content: content
+    })
+    .then(function() {
+        console.log("Message is created!");
+    })
+    .catch(function(error) {
+        console.error("Failed to sent ...", error);
+    });
+}
 
-const listSubscriber = [];
 
 function subscribe(screen) {
-    listSubscriber.push(screen);
-};
-
-function unsubscribe(screen) {
-    //TODO: homework
-};
+    listSubscribers.push(screen)
+}
 
 function notifyMessage(message) {
-
-    for (let i = 0; i < listSubscriber.length; i++) {
-        listSubscriber[i].onNotifyMessage(message);
+    for (let i = 0; i < listSubscribers.length; i++) {
+        listSubscribers[i].onNotifyMessage(message)
     }
 };
 
-function saveMessage(message) {
-    message.id = guid();
-
-    db.collection("conversations").doc("GZipxA9eWg2PnoRQD0lm").update({
-        messages: firebase.firestore.FieldValue.arrayUnion(message)
-    })
-    .then(function () {
-            console.log("Document successfully written!");
-        })
-    .catch(function (error) {
-        console.error("Error writing document: ", error);
-    });
+function notifyMessages(messages) {
+    for (let i = 0; i < listSubscribers.length; i++) {
+        listSubscribers[i].onNotifyMessages(messages)
+    }
 };
 
-export { sendMessage };
-export { subscribe };
-export { unsubscribe };
-export default messages;
+export {saveMessage, subscribe, currentConversation, changeConversation}
